@@ -8,6 +8,8 @@ public class RctcSbApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RctcSbApplication.class, args);
+		
+		System.out.println("hi");
 	}
 
 }
