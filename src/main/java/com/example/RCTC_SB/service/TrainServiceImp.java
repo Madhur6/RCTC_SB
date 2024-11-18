@@ -94,10 +94,10 @@ public class TrainServiceImp implements TrainService{
         existingTrain.setArrivalTime(trainRequestDTO.getArrivalTime());
         existingTrain.setDepartureTime(trainRequestDTO.getDepartureTime());
 
-        // Fetch existing coaches for the train
+        
         List<Coach> existingCoaches = coachRepo.findAllByTrain_TrainNumber(trainNumber);
 
-        // Map existing coaches for easy lookup
+        
         Map<String, Coach> existingCoachMap = existingCoaches.stream()
                 .collect(Collectors.toMap(Coach::getCoachName, coach -> coach));
 
@@ -113,18 +113,18 @@ public class TrainServiceImp implements TrainService{
                 String coachName = coachType.charAt(0) + Integer.toString(j);
 
                 if (existingCoachMap.containsKey(coachName)) {
-                    // Update existing coach
+                    
                     Coach existingCoach = existingCoachMap.get(coachName);
                     existingCoach.setCoachType(coachType);
                     existingCoach.setTotalSeats(totalSeats);
                     
                     existingCoach.setAvailableSeats(existingCoach.getAvailableSeats() + (totalSeats - existingCoach.getTotalSeats()));
-//                    existingCoach.setTicketPrice(ticketPrice);
+                    existingCoach.setTicketPrice(ticketPrice);
 
                     updatedCoaches.add(existingCoach);
                     existingCoachMap.remove(coachName); // Mark as processed
                 } else {
-                    // Add new coach
+                    
                     Coach newCoach = new Coach();
                     newCoach.setCoachType(coachType);
                     newCoach.setCoachName(coachName);
@@ -141,10 +141,9 @@ public class TrainServiceImp implements TrainService{
         // Remove unprocessed coaches
         coachRepo.deleteAll(existingCoachMap.values());
 
-        // Save updated coach list
+     
         coachRepo.saveAll(updatedCoaches);
 
-        // Update train with the new coach list
         existingTrain.setCoaches(updatedCoaches);
 
         return trainRepo.save(existingTrain);
